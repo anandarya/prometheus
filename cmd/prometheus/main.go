@@ -106,7 +106,7 @@ func main() {
 		outageTolerance     model.Duration
 		resendDelay         model.Duration
 		web                 web.Options
-		tsdb                tsdb.Options
+		tsdb                web.TSDBOptions
 		lookbackDelta       model.Duration
 		webTimeout          model.Duration
 		queryTimeout        model.Duration
@@ -655,6 +655,7 @@ func main() {
 	}
 	{
 		// TSDB.
+		opts := cfg.tsdb.ToTSDBOptions()
 		cancel := make(chan struct{})
 		g.Add(
 			func() error {
@@ -668,7 +669,7 @@ func main() {
 					cfg.localStoragePath,
 					log.With(logger, "component", "tsdb"),
 					prometheus.DefaultRegisterer,
-					&cfg.tsdb,
+					&opts,
 				)
 				if err != nil {
 					return errors.Wrapf(err, "opening storage failed")
